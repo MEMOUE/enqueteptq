@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Fiche Enregistrée</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f6f7fb;
+      color: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.1);
+      text-align: center;
+      max-width: 500px;
+      border: 2px solid #333;
+    }
+    .rhdp-header {
+      background: linear-gradient(135deg, #FF6B35, #1B5E20);
+      color: white;
+      padding: 15px;
+      margin: -40px -40px 30px -40px;
+      border-radius: 10px 10px 0 0;
+      font-weight: bold;
+    }
+    h1 {
+      color: #16a34a;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+    .stats {
+      background: #f3f4f6;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #374151;
+      border-left: 4px solid #FF6B35;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    a, .btn {
+      display: inline-block;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #FF6B35, #1B5E20);
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #6b7280;
+    }
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="rhdp-header">
+    <div>Rêvons Grand</div>
+    <div>Fiche d'Identification Unique du Militant</div>
+  </div>
+
+  <div class="success-icon">✅</div>
+  <h1>Fiche Enregistrée avec Succès !</h1>
+  <p>La fiche d'identification unique du militant a été enregistrée dans la base de données.</p>
+
+  {% if total_enquetes %}
+  <div class="stats">
+    📊 Total de vos fiches enregistrées : <strong>{{ total_enquetes }}</strong>
+  </div>
+  {% endif %}
+
+  <div class="actions">
+    <a href="{% url 'enquete' %}" class="btn btn-primary">Nouvelle Fiche</a>
+    <a href="{% url 'logout' %}" class="btn btn-secondary">Se déconnecter</a>
+  </div>
+</div>
+</body>
+</html>

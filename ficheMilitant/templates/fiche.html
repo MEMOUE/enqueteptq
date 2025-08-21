@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fiche d’Identification Unique</title>
+  <style>
+    body {margin:0; font-family: Arial, sans-serif; background:#f6f7fb; color:#111;}
+    .container {max-width:900px; margin:40px auto; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.1); padding:30px;}
+    h1 {margin:0 0 20px; font-size:22px; text-align:center; text-transform:uppercase;}
+    form {display:grid; gap:24px;}
+    .section {border-top:2px solid #e5e7eb; padding-top:20px;}
+    .section h2 {font-size:18px; margin:0 0 12px; color:#2563eb;}
+    .field {display:grid; gap:6px;}
+    label {font-weight:600; font-size:14px;}
+    input, select, textarea {padding:10px 12px; border:1px solid #ccc; border-radius:8px; font-size:14px; width:100%;}
+    .row {display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+    .btn {background:#2563eb; color:#fff; border:0; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; text-align:center;}
+    .btn:hover {background:#1d4ed8;}
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Fiche d’Enquête Politique – Élections Législatives</h1>
+  <form>
+    <!-- Section Identité -->
+    <div class="section">
+      <h2>Informations personnelles</h2>
+      <div class="row">
+        <div class="field">
+          <label for="prenom">Prénom(s) *</label>
+          <input type="text" id="prenom" name="prenom" required />
+        </div>
+        <div class="field">
+          <label for="nom">Nom *</label>
+          <input type="text" id="nom" name="nom" required />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="age">Âge *</label>
+          <input type="number" id="age" name="age" required />
+        </div>
+        <div class="field">
+          <label for="sexe">Sexe *</label>
+          <select id="sexe" name="sexe" required>
+            <option value="">Sélectionner</option>
+            <option value="M">Masculin</option>
+            <option value="F">Féminin</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="contact">Téléphone *</label>
+          <input type="text" id="contact" name="contact" required />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="profession">Profession *</label>
+          <input type="text" id="profession" name="profession" required />
+        </div>
+        <div class="field">
+          <label for="niveau">Niveau d’études</label>
+          <select id="niveau" name="niveau">
+            <option value="">Sélectionner</option>
+            <option value="primaire">Primaire</option>
+            <option value="secondaire">Secondaire</option>
+            <option value="superieur">Supérieur</option>
+            <option value="aucun">Aucun</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Localisation électorale -->
+    <div class="section">
+      <h2>Informations électorales</h2>
+      <div class="row">
+        <div class="field">
+          <label for="region">Région *</label>
+          <input type="text" id="region" name="region" required />
+        </div>
+        <div class="field">
+          <label for="departement">Département *</label>
+          <input type="text" id="departement" name="departement" required />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="commune">Commune / Sous-préfecture *</label>
+          <input type="text" id="commune" name="commune" required />
+        </div>
+        <div class="field">
+          <label for="lieu_vote">Lieu de vote *</label>
+          <input type="text" id="lieu_vote" name="lieu_vote" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="carte_electeur">Numéro de carte d’électeur</label>
+        <input type="text" id="carte_electeur" name="carte_electeur" />
+      </div>
+    </div>
+
+    <!-- Section Opinion politique -->
+    <div class="section">
+      <h2>Opinion politique</h2>
+      <div class="field">
+        <label for="parti">Parti politique de préférence *</label>
+        <input type="text" id="parti" name="parti" required />
+      </div>
+      <div class="field">
+        <label for="candidat">Candidat soutenu *</label>
+        <input type="text" id="candidat" name="candidat" required />
+      </div>
+      <div class="field">
+        <label for="attentes">Attentes principales de la population</label>
+        <textarea id="attentes" name="attentes" rows="4"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn">Enregistrer l’Enquête</button>
+  </form>
+</div>
+</body>
+</html>
