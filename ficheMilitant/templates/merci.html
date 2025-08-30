@@ -48,6 +48,66 @@
       font-size: 14px;
       color: #374151;
       border-left: 4px solid #FF6B35;
+      text-align: left;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .stats-row:last-child {
+      border-bottom: none;
+    }
+    .stats-label {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .stats-value {
+      font-weight: bold;
+      color: #111;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .badge-info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
     }
     .actions {
       display: flex;
@@ -83,6 +143,16 @@
       font-size: 48px;
       margin-bottom: 15px;
     }
+    .info-note {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 15px 0;
+      font-size: 13px;
+      color: #92400e;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
@@ -98,13 +168,49 @@
 
   {% if total_enquetes %}
   <div class="stats">
-    📊 Total de vos fiches enregistrées : <strong>{{ total_enquetes }}</strong>
+    <div class="stats-row">
+      <span class="stats-label">📊 Total de vos fiches enregistrées :</span>
+      <span class="stats-value">{{ total_enquetes }}</span>
+    </div>
+
+    <div class="stats-row">
+      <span class="stats-label">✅ Électeurs déjà connus :</span>
+      <span class="stats-value">
+        {{ fiches_dans_csv }}
+        {% if pourcentage_csv > 0 %}
+        <span class="badge badge-success">{{ pourcentage_csv|floatformat:0 }}%</span>
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="stats-row">
+      <span class="stats-label">🆕 Nouvelles inscriptions potentielles :</span>
+      <span class="stats-value">
+        {{ nouvelles_inscriptions }}
+        {% if nouvelles_inscriptions > 0 %}
+        <span class="badge badge-info">À inscrire</span>
+        {% endif %}
+      </span>
+    </div>
+  </div>
+
+  {% if pourcentage_csv > 0 %}
+  <div class="progress-bar">
+    <div class="progress-fill" style="width: {{ pourcentage_csv|floatformat:0 }}%">
+      {{ pourcentage_csv|floatformat:0 }}% déjà inscrits
+    </div>
   </div>
   {% endif %}
+  {% endif %}
+
+  <div class="info-note">
+    💡 <strong>Note importante :</strong> Les personnes non trouvées dans le fichier électoral
+    doivent être encouragées à s'inscrire sur les listes électorales lors de la prochaine période d'inscription.
+  </div>
 
   <div class="actions">
-    <a href="{% url 'enquete' %}" class="btn btn-primary">Nouvelle Fiche</a>
-    <a href="{% url 'logout' %}" class="btn btn-secondary">Se déconnecter</a>
+    <a href="{% url 'enquete' %}" class="btn btn-primary">➕ Nouvelle Fiche</a>
+    <a href="{% url 'logout' %}" class="btn btn-secondary">🚪 Se déconnecter</a>
   </div>
 </div>
 </body>

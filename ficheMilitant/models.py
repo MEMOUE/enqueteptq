@@ -75,10 +75,10 @@ class FicheMilitant(models.Model):
     numero_carte_electeur = models.CharField(max_length=50, blank=True, null=True, verbose_name="Numéro carte électeur")
     nni = models.CharField(max_length=50, blank=True, null=True, verbose_name="Numéro d'Identification Unique (NNI)")
 
-    # Section 4 supprimée selon la version finale validée
-
     # Métadonnées
     date_soumission = models.DateTimeField(auto_now_add=True)
+    est_dans_csv = models.BooleanField(default=False, verbose_name="Présent dans le fichier électoral")
+    numero_electeur_csv = models.CharField(max_length=50, blank=True, null=True, verbose_name="Numéro électeur trouvé")
 
     def __str__(self):
         return f"{self.prenoms} {self.nom} - {self.date_soumission.strftime('%d/%m/%Y')}"

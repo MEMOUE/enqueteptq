@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -115,5 +116,13 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "enquete"   # page après connexion
+LOGIN_REDIRECT_URL = "enquete"
 LOGOUT_REDIRECT_URL = "login"
+
+# Créer le dossier data s'il n'existe pas
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
+
+# Chemin vers le fichier CSV des électeurs
+CSV_ELECTEURS_PATH = os.path.join(DATA_DIR, 'sous_prefectures_selection.csv')
