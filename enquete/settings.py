@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+import pymysql
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -61,13 +63,23 @@ WSGI_APPLICATION = 'enquete.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+pymysql.install_as_MySQLdb()
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'enquete_db',   # 👈 choisis un nom pour ta base
+        'USER': 'root',         # par défaut dans XAMPP
+        'PASSWORD': '',         # mot de passe vide si tu n’as rien défini
+        'HOST': '127.0.0.1',    # localhost
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
+
+
 
 
 # Password validation
