@@ -33,9 +33,8 @@ class FicheMilitant(models.Model):
     qualite_section = models.CharField(max_length=100, blank=True, null=True, verbose_name="Qualité dans la section")
     comite_base = models.CharField(max_length=100, verbose_name="Comité de base")
     qualite_cb = models.CharField(max_length=100, blank=True, null=True, verbose_name="Qualité dans le CB")
-    fonction_parti = models.CharField(max_length=100, blank=True, null=True, verbose_name="Fonction dans le Parti")
+    # CHAMPS SUPPRIMÉS : fonction_parti et poste_electif
     lieu_vote = models.CharField(max_length=150, verbose_name="Lieu de vote")
-    poste_electif = models.CharField(max_length=100, blank=True, null=True, verbose_name="Poste électif")
 
     # 2. ETAT CIVIL
     prenoms = models.CharField(max_length=200, verbose_name="Prénom(s)")

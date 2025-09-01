@@ -89,7 +89,7 @@ class FicheMilitantAdmin(admin.ModelAdmin):
             'fields': (
                 'region', 'departement_administratif', 'departement', 'zone',
                 'section', 'qualite_section', 'comite_base', 'qualite_cb',
-                'fonction_parti', 'lieu_vote', 'poste_electif'
+                'lieu_vote'  # Supprimé: fonction_parti et poste_electif
             )
         }),
         ('2. État Civil', {

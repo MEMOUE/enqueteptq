@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Erreur serveur - Enquêtes Militants</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f6f7fb, #e8eef7);
+      color: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .error-container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.1);
+      text-align: center;
+      max-width: 500px;
+      border: 2px solid #333;
+    }
+    .error-header {
+      background: linear-gradient(135deg, #FF6B35, #1B5E20);
+      color: white;
+      padding: 15px;
+      margin: -40px -40px 30px -40px;
+      border-radius: 10px 10px 0 0;
+      font-weight: bold;
+    }
+    .error-code {
+      font-size: 72px;
+      font-weight: bold;
+      color: #ef4444;
+      margin: 0;
+    }
+    .error-title {
+      font-size: 24px;
+      margin: 10px 0;
+      color: #333;
+    }
+    .error-message {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    .actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-block;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #FF6B35, #1B5E20);
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #6b7280;
+    }
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+    .error-details {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 20px 0;
+      font-size: 13px;
+      color: #92400e;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+<div class="error-container">
+  <div class="error-header">
+    Rêvons Grand - Enquêtes Militants
+  </div>
+
+  <div class="error-code">500</div>
+  <h1 class="error-title">Erreur serveur</h1>
+  <p class="error-message">
+    Une erreur technique s'est produite sur le serveur.
+    <br>Nous nous excusons pour ce désagrément temporaire.
+  </p>
+
+  <div class="error-details">
+    <strong>Que faire ?</strong>
+    <ul style="margin: 8px 0; padding-left: 20px;">
+      <li>Actualisez la page (F5)</li>
+      <li>Réessayez dans quelques minutes</li>
+      <li>Contactez l'administrateur si le problème persiste</li>
+    </ul>
+  </div>
+
+  <div class="actions">
+    <a href="{% url 'login' %}" class="btn btn-primary">🏠 Retour à l'accueil</a>
+    <a href="javascript:location.reload()" class="btn btn-secondary">🔄 Actualiser</a>
+  </div>
+</div>
+</body>
+</html>

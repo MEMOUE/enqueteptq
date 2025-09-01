@@ -402,24 +402,12 @@
             </div>
           </div>
 
-          <div class="field-row">
-            <div class="field">
-              <label for="{{ form.fonction_parti.id_for_label }}">Fonction dans le Parti</label>
-              {{ form.fonction_parti }}
-              {% if form.fonction_parti.errors %}<div class="alert alert-error">{{ form.fonction_parti.errors.0 }}</div>{% endif %}
-            </div>
+          <!-- Supprimé: fonction_parti et poste_electif -->
+          <div class="field-row full">
             <div class="field">
               <label for="{{ form.lieu_vote.id_for_label }}">Lieu de vote <span class="required">*</span></label>
               {{ form.lieu_vote }}
               {% if form.lieu_vote.errors %}<div class="alert alert-error">{{ form.lieu_vote.errors.0 }}</div>{% endif %}
-            </div>
-          </div>
-
-          <div class="field-row full">
-            <div class="field">
-              <label for="{{ form.poste_electif.id_for_label }}">Poste électif</label>
-              {{ form.poste_electif }}
-              {% if form.poste_electif.errors %}<div class="alert alert-error">{{ form.poste_electif.errors.0 }}</div>{% endif %}
             </div>
           </div>
         </div>

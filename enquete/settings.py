@@ -1,26 +1,27 @@
+# enquete/settings.py
+
 from pathlib import Path
 import os
 import pymysql
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure--vx0$2^6p!!vmcumt*op52n=3dgo-wfv)*i=3$j&+w6x5(zy95'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False  # ← CHANGEMENT PRINCIPAL : Mettre à False
 
-ALLOWED_HOSTS = []
-
+# ← CHANGEMENT : Ajouter vos domaines/IPs autorisés
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'votre-domaine.com',  # Remplacez par votre domaine
+    # Ajoutez l'IP de votre serveur si nécessaire
+]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,7 +47,7 @@ ROOT_URLCONF = 'enquete.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # ← CHANGEMENT : Dossier pour templates d'erreur
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -60,18 +61,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'enquete.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 pymysql.install_as_MySQLdb()
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'enquete_db',   # 👈 choisis un nom pour ta base
-        'USER': 'root',         # par défaut dans XAMPP
-        'PASSWORD': '',         # mot de passe vide si tu n’as rien défini
-        'HOST': '127.0.0.1',    # localhost
+        'NAME': 'enquete_db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
             'charset': 'utf8mb4',
@@ -79,12 +78,7 @@ DATABASES = {
     }
 }
 
-
-
-
 # Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -100,27 +94,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = 'fr-fr'  # ← CHANGEMENT : Français par défaut
+TIME_ZONE = 'Africa/Abidjan'  # ← CHANGEMENT : Fuseau horaire de la Côte d'Ivoire
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # ← AJOUT : Pour la production
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = [
@@ -138,3 +122,24 @@ if not os.path.exists(DATA_DIR):
 
 # Chemin vers le fichier CSV des électeurs
 CSV_ELECTEURS_PATH = os.path.join(DATA_DIR, 'sous_prefectures_selection.csv')
+
+# ← AJOUTS POUR LA GESTION DES ERREURS
+# Configuration des logs pour capturer les erreurs
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'django_errors.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
