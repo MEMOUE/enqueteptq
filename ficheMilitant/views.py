@@ -1,3 +1,5 @@
+# ficheMilitant/views.py
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -5,6 +7,10 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse
 from django.template import loader
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from PIL import Image
+import os
 from .forms import FicheMilitantForm, EnquetePolitiqueForm
 from .models import Enqueteur, FicheMilitant
 from .csv_utils import verifier_personne_dans_csv, compter_electeurs_csv
@@ -16,6 +22,30 @@ def ficheMilitant(request):
 def fiche(request):
     fiche = loader.get_template('fiche.html')
     return HttpResponse(fiche.render())
+
+def optimize_image(image_file, max_size=(800, 800), quality=85):
+    """
+    Optimise une image en la redimensionnant et en réduisant la qualité
+    """
+    try:
+        with Image.open(image_file) as img:
+            # Convertir en RGB si nécessaire
+            if img.mode in ('RGBA', 'LA', 'P'):
+                img = img.convert('RGB')
+
+            # Redimensionner si l'image est trop grande
+            img.thumbnail(max_size, Image.Resampling.LANCZOS)
+
+            # Sauvegarder dans un buffer
+            from io import BytesIO
+            buffer = BytesIO()
+            img.save(buffer, format='JPEG', quality=quality, optimize=True)
+            buffer.seek(0)
+
+            return ContentFile(buffer.read())
+    except Exception as e:
+        print(f"Erreur lors de l'optimisation de l'image: {e}")
+        return image_file
 
 @login_required
 def enquete_view(request):
@@ -31,10 +61,30 @@ def enquete_view(request):
         return redirect('login')
 
     if request.method == "POST":
-        form = FicheMilitantForm(request.POST)
+        form = FicheMilitantForm(request.POST, request.FILES)
         if form.is_valid():
             fiche = form.save(commit=False)
             fiche.enqueteur = enqueteur  # Associer la fiche à l'enquêteur connecté
+
+            # Traitement de la photo
+            if 'photo' in request.FILES:
+                photo_file = request.FILES['photo']
+                try:
+                    # Optimiser l'image
+                    optimized_photo = optimize_image(photo_file)
+
+                    # Générer un nom de fichier unique
+                    file_extension = '.jpg'  # Toujours sauvegarder en JPEG après optimisation
+                    filename = f"{fiche.prenoms}_{fiche.nom}_{enqueteur.id}".replace(' ', '_').replace('/', '_')
+                    filename = f"{filename}{file_extension}"
+
+                    # Sauvegarder la photo optimisée
+                    fiche.photo.save(filename, optimized_photo, save=False)
+
+                    messages.info(request, "📷 Photo ajoutée et optimisée avec succès.")
+
+                except Exception as e:
+                    messages.warning(request, f"Erreur lors du traitement de la photo: {str(e)}")
 
             # Vérifier si la personne existe dans le CSV
             nom = fiche.nom
@@ -74,7 +124,13 @@ def enquete_view(request):
                     "Elle sera enregistrée comme nouvelle inscription potentielle."
                 )
 
+            # Sauvegarder la fiche
             fiche.save()
+
+            # IMPORTANT: Stocker l'ID de la fiche dans la session pour l'afficher sur la page merci
+            request.session['derniere_fiche_id'] = fiche.id
+            request.session['fiche_nom_complet'] = f"{fiche.prenoms} {fiche.nom}"
+
             messages.success(request, "✅ Fiche de militant enregistrée avec succès !")
             return redirect("merci")
         else:
@@ -95,27 +151,78 @@ def enquete_view(request):
 
 @login_required
 def merci_view(request):
+    """Vue pour la page de remerciement avec affichage de la dernière fiche"""
+    derniere_fiche = None
+    nom_complet = None
+
+    # Récupérer les informations de la dernière fiche enregistrée depuis la session
+    derniere_fiche_id = request.session.get('derniere_fiche_id')
+    nom_complet = request.session.get('fiche_nom_complet', 'Militant')
+
+    print(f"DEBUG: derniere_fiche_id = {derniere_fiche_id}")  # Debug
+
+    if derniere_fiche_id:
+        try:
+            # Récupérer la fiche depuis la base de données
+            derniere_fiche = FicheMilitant.objects.get(
+                id=derniere_fiche_id,
+                enqueteur=request.user.enqueteur
+            )
+            print(f"DEBUG: Fiche trouvée - {derniere_fiche.prenoms} {derniere_fiche.nom}")  # Debug
+            print(f"DEBUG: Photo URL - {derniere_fiche.photo.url if derniere_fiche.photo else 'Pas de photo'}")  # Debug
+
+            # Nettoyer la session après utilisation
+            if 'derniere_fiche_id' in request.session:
+                del request.session['derniere_fiche_id']
+            if 'fiche_nom_complet' in request.session:
+                del request.session['fiche_nom_complet']
+
+        except FicheMilitant.DoesNotExist:
+            print("DEBUG: Fiche non trouvée")  # Debug
+            derniere_fiche = None
+        except Exception as e:
+            print(f"DEBUG: Erreur - {e}")  # Debug
+            derniere_fiche = None
+
+    # Calculer les statistiques générales
     try:
         enqueteur = request.user.enqueteur
         total_fiches = enqueteur.fiches_militant.count()
         fiches_dans_csv = enqueteur.fiches_militant.filter(est_dans_csv=True).count()
+        fiches_avec_photo = enqueteur.fiches_militant.exclude(photo='').count()
 
         # Calculer le pourcentage
         pourcentage = 0
         if total_fiches > 0:
             pourcentage = (fiches_dans_csv / total_fiches) * 100
 
+        # Pourcentage de fiches avec photo
+        pourcentage_photo = 0
+        if total_fiches > 0:
+            pourcentage_photo = (fiches_avec_photo / total_fiches) * 100
+
     except Enqueteur.DoesNotExist:
         total_fiches = 0
         fiches_dans_csv = 0
         pourcentage = 0
+        fiches_avec_photo = 0
+        pourcentage_photo = 0
 
-    return render(request, "merci.html", {
+    # Préparer le contexte pour le template
+    context = {
         'total_enquetes': total_fiches,
         'fiches_dans_csv': fiches_dans_csv,
         'pourcentage_csv': pourcentage,
-        'nouvelles_inscriptions': total_fiches - fiches_dans_csv
-    })
+        'nouvelles_inscriptions': total_fiches - fiches_dans_csv,
+        'fiches_avec_photo': fiches_avec_photo,
+        'pourcentage_photo': pourcentage_photo,
+        'derniere_fiche': derniere_fiche,
+        'nom_complet': nom_complet,
+    }
+
+    print(f"DEBUG: Context - derniere_fiche = {derniere_fiche}")  # Debug
+
+    return render(request, "merci.html", context)
 
 def login_view(request):
     # ✅ Vérifier si l'utilisateur est connecté ET bien un enquêteur actif

@@ -80,16 +80,129 @@
       padding: 5px;
     }
 
-    .photo-placeholder {
-      width: 80px;
-      height: 100px;
+    /* Section Photo */
+    .photo-section {
+      width: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .photo-container {
+      width: 120px;
+      height: 150px;
       border: 2px solid #333;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: #f8f9fa;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .photo-placeholder {
+      text-align: center;
       font-size: 12px;
       color: #666;
+      padding: 10px;
+    }
+
+    .photo-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .photo-btn {
+      padding: 8px 12px;
+      font-size: 11px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
       text-align: center;
+      transition: all 0.2s;
+    }
+
+    .photo-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .photo-btn.primary {
+      background: #FF6B35;
+      color: white;
+      border-color: #FF6B35;
+    }
+
+    .photo-btn.primary:hover {
+      background: #e55a2b;
+    }
+
+    .photo-input {
+      display: none;
+    }
+
+    /* Modal pour la caméra */
+    .camera-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .camera-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 90%;
+      max-height: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .camera-video {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .camera-controls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .camera-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .camera-btn.capture {
+      background: #16a34a;
+      color: white;
+    }
+
+    .camera-btn.cancel {
+      background: #6b7280;
+      color: white;
     }
 
     .form-title {
@@ -289,6 +402,9 @@
       .checkbox-group {
         grid-template-columns: 1fr;
       }
+      .photo-section {
+        align-self: center;
+      }
     }
   </style>
 </head>
@@ -310,8 +426,18 @@
         Rêvons Grand
       </div>
     </div>
-    <div class="photo-placeholder">
-      PHOTO
+    <div class="photo-section">
+      <div class="photo-container">
+        <img id="photoPreview" class="photo-preview" alt="Photo du militant">
+        <div id="photoPlaceholder" class="photo-placeholder">
+          PHOTO<br>MILITANT
+        </div>
+      </div>
+      <div class="photo-controls">
+        <button type="button" class="photo-btn primary" onclick="openCamera()">📷 Prendre</button>
+        <button type="button" class="photo-btn" onclick="selectFile()">📁 Choisir</button>
+        <button type="button" class="photo-btn" onclick="removePhoto()" id="removeBtn" style="display:none;">🗑️ Suppr.</button>
+      </div>
     </div>
   </div>
 
@@ -343,8 +469,11 @@
     </div>
     {% endif %}
 
-    <form method="post">
+    <form method="post" enctype="multipart/form-data" id="mainForm">
       {% csrf_token %}
+
+      <!-- Champ photo caché -->
+      {{ form.photo }}
 
       <!-- 1. LOCALISATION -->
       <div class="section">
@@ -402,7 +531,6 @@
             </div>
           </div>
 
-          <!-- Supprimé: fonction_parti et poste_electif -->
           <div class="field-row full">
             <div class="field">
               <label for="{{ form.lieu_vote.id_for_label }}">Lieu de vote <span class="required">*</span></label>
@@ -538,9 +666,147 @@
         </div>
       </div>
 
+      {% if form.photo.errors %}
+      <div class="alert alert-error">
+        Photo : {{ form.photo.errors.0 }}
+      </div>
+      {% endif %}
+
       <button type="submit" class="btn">Enregistrer la Fiche</button>
     </form>
   </div>
 </div>
+
+<!-- Modal pour la caméra -->
+<div id="cameraModal" class="camera-modal">
+  <div class="camera-container">
+    <video id="cameraVideo" class="camera-video" autoplay playsinline></video>
+    <canvas id="cameraCanvas" style="display:none;"></canvas>
+    <div class="camera-controls">
+      <button type="button" class="camera-btn capture" onclick="capturePhoto()">📷 Capturer</button>
+      <button type="button" class="camera-btn cancel" onclick="closeCamera()">❌ Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let stream = null;
+  const photoInput = document.getElementById('{{ form.photo.id_for_label }}');
+  const photoPreview = document.getElementById('photoPreview');
+  const photoPlaceholder = document.getElementById('photoPlaceholder');
+  const removeBtn = document.getElementById('removeBtn');
+  const cameraModal = document.getElementById('cameraModal');
+  const cameraVideo = document.getElementById('cameraVideo');
+  const cameraCanvas = document.getElementById('cameraCanvas');
+
+  // Fonction pour sélectionner un fichier
+  function selectFile() {
+    photoInput.click();
+  }
+
+  // Gestion du changement de fichier
+  photoInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      showPhotoPreview(file);
+    }
+  });
+
+  // Afficher l'aperçu de la photo
+  function showPhotoPreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      photoPreview.src = e.target.result;
+      photoPreview.style.display = 'block';
+      photoPlaceholder.style.display = 'none';
+      removeBtn.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Supprimer la photo
+  function removePhoto() {
+    photoInput.value = '';
+    photoPreview.style.display = 'none';
+    photoPlaceholder.style.display = 'block';
+    removeBtn.style.display = 'none';
+  }
+
+  // Ouvrir la caméra
+  async function openCamera() {
+    try {
+      cameraModal.style.display = 'flex';
+
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: 'user' // Caméra frontale par défaut
+        }
+      });
+
+      cameraVideo.srcObject = stream;
+    } catch (error) {
+      console.error('Erreur accès caméra:', error);
+      alert('Impossible d\'accéder à la caméra. Veuillez vérifier les permissions.');
+      closeCamera();
+    }
+  }
+
+  // Fermer la caméra
+  function closeCamera() {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      stream = null;
+    }
+    cameraModal.style.display = 'none';
+  }
+
+  // Capturer la photo
+  function capturePhoto() {
+    const canvas = cameraCanvas;
+    const video = cameraVideo;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+
+    // Convertir en blob
+    canvas.toBlob(function(blob) {
+      // Créer un fichier à partir du blob
+      const file = new File([blob], 'photo_camera.jpg', { type: 'image/jpeg' });
+
+      // Créer un objet FileList
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      photoInput.files = dt.files;
+
+      // Afficher l'aperçu
+      showPhotoPreview(file);
+
+      closeCamera();
+    }, 'image/jpeg', 0.8);
+  }
+
+  // Fermer la modal en cliquant à l'extérieur
+  cameraModal.addEventListener('click', function(e) {
+    if (e.target === cameraModal) {
+      closeCamera();
+    }
+  });
+
+  // Si une photo existe déjà (en cas d'erreur de formulaire)
+  {% if form.photo.value %}
+  fetch('{{ form.photo.value.url }}')
+          .then(response => response.blob())
+          .then(blob => {
+            const file = new File([blob], 'photo_existante.jpg', { type: 'image/jpeg' });
+            showPhotoPreview(file);
+          })
+          .catch(error => console.error('Erreur chargement photo:', error));
+  {% endif %}
+</script>
 </body>
 </html>

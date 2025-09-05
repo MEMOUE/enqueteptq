@@ -104,6 +104,14 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # ← AJOUT : Pour la production
 
+# ← NOUVEAU : Configuration des fichiers média (photos)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Créer le dossier media s'il n'existe pas
+if not os.path.exists(MEDIA_ROOT):
+    os.makedirs(MEDIA_ROOT)
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -143,3 +151,12 @@ LOGGING = {
         },
     },
 }
+
+# ← NOUVEAU : Configuration pour les uploads d'images
+# Taille maximale des fichiers uploadés (5MB)
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
+# Types de fichiers autorisés pour les photos
+ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
+MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB en bytes

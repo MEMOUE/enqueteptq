@@ -1,5 +1,20 @@
+# ficheMilitant/models.py
+
 from django.db import models
 from django.contrib.auth.models import User
+import os
+
+def upload_photo_path(instance, filename):
+    """Fonction pour définir le chemin d'upload des photos"""
+    # Organiser par enquêteur et par date
+    date_str = instance.date_soumission.strftime('%Y/%m') if hasattr(instance, 'date_soumission') and instance.date_soumission else '2025/01'
+    enqueteur_id = instance.enqueteur.id if instance.enqueteur else 'unknown'
+
+    # Nettoyer le nom de fichier
+    name, ext = os.path.splitext(filename)
+    clean_name = f"{instance.prenoms}_{instance.nom}".replace(' ', '_').replace('/', '_')
+
+    return f'photos/militants/{enqueteur_id}/{date_str}/{clean_name}{ext}'
 
 class Enqueteur(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -20,6 +35,15 @@ class FicheMilitant(models.Model):
     # Lien avec l'enquêteur qui a fait l'enquête
     enqueteur = models.ForeignKey(Enqueteur, on_delete=models.CASCADE, related_name='fiches_militant')
 
+    # NOUVEAU : Champ pour la photo
+    photo = models.ImageField(
+        upload_to=upload_photo_path,
+        blank=True,
+        null=True,
+        verbose_name="Photo du militant",
+        help_text="Photo d'identité du militant (facultatif)"
+    )
+
     # 1. LOCALISATION
     region = models.CharField(max_length=100, verbose_name="Région")
     departement_administratif = models.CharField(max_length=100, verbose_name="Département Administratif")
@@ -33,7 +57,6 @@ class FicheMilitant(models.Model):
     qualite_section = models.CharField(max_length=100, blank=True, null=True, verbose_name="Qualité dans la section")
     comite_base = models.CharField(max_length=100, verbose_name="Comité de base")
     qualite_cb = models.CharField(max_length=100, blank=True, null=True, verbose_name="Qualité dans le CB")
-    # CHAMPS SUPPRIMÉS : fonction_parti et poste_electif
     lieu_vote = models.CharField(max_length=150, verbose_name="Lieu de vote")
 
     # 2. ETAT CIVIL
@@ -81,6 +104,12 @@ class FicheMilitant(models.Model):
 
     def __str__(self):
         return f"{self.prenoms} {self.nom} - {self.date_soumission.strftime('%d/%m/%Y')}"
+
+    def get_photo_url(self):
+        """Retourne l'URL de la photo ou None"""
+        if self.photo:
+            return self.photo.url
+        return None
 
     class Meta:
         verbose_name = "Fiche de Militant"
