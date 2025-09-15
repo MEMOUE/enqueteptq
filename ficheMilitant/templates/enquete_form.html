@@ -255,6 +255,18 @@
       border: 1px solid #fca5a5;
     }
 
+    .alert-warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .alert-info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+    }
+
     .stats {
       background: #f8fafc;
       padding: 15px;
@@ -312,6 +324,12 @@
       color: red;
     }
 
+    .optional {
+      color: #666;
+      font-size: 11px;
+      font-weight: normal;
+    }
+
     input, select, textarea {
       padding: 8px 10px;
       border: 1px solid #ccc;
@@ -325,6 +343,20 @@
       border-color: #FF6B35;
       outline: none;
       box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+    }
+
+    /* Style spécial pour les champs conditionnels */
+    .conditional-field {
+      transition: opacity 0.3s ease;
+    }
+
+    .conditional-field.disabled {
+      opacity: 0.6;
+    }
+
+    .conditional-field.disabled select {
+      background-color: #f3f4f6;
+      color: #6b7280;
     }
 
     .checkbox-group {
@@ -479,18 +511,6 @@
       <div class="section">
         <div class="section-header">1-LOCALISATION</div>
         <div class="section-content">
-          <div class="field-row">
-            <div class="field">
-              <label for="{{ form.region.id_for_label }}">Région <span class="required">*</span></label>
-              {{ form.region }}
-              {% if form.region.errors %}<div class="alert alert-error">{{ form.region.errors.0 }}</div>{% endif %}
-            </div>
-            <div class="field">
-              <label for="{{ form.departement_administratif.id_for_label }}">Département Administratif <span class="required">*</span></label>
-              {{ form.departement_administratif }}
-              {% if form.departement_administratif.errors %}<div class="alert alert-error">{{ form.departement_administratif.errors.0 }}</div>{% endif %}
-            </div>
-          </div>
 
           <div class="field-row">
             <div class="field">
@@ -532,8 +552,11 @@
           </div>
 
           <div class="field-row full">
-            <div class="field">
-              <label for="{{ form.lieu_vote.id_for_label }}">Lieu de vote <span class="required">*</span></label>
+            <div class="field conditional-field" id="lieuVoteField">
+              <label for="{{ form.lieu_vote.id_for_label }}">
+                Lieu de vote <span class="required">*</span>
+                <span id="lieuxCount" style="font-size: 11px; color: #666;"></span>
+              </label>
               {{ form.lieu_vote }}
               {% if form.lieu_vote.errors %}<div class="alert alert-error">{{ form.lieu_vote.errors.0 }}</div>{% endif %}
             </div>
@@ -698,6 +721,64 @@
   const cameraModal = document.getElementById('cameraModal');
   const cameraVideo = document.getElementById('cameraVideo');
   const cameraCanvas = document.getElementById('cameraCanvas');
+
+  // Données des zones et lieux de vote depuis Django
+  const zonesLieux = {{ form.get_zones_lieux_json|safe }};
+
+  console.log('Zones et lieux chargés:', zonesLieux);
+
+  // NOUVELLE FONCTION : Mise à jour des lieux de vote selon la zone sélectionnée
+  function updateLieuxVote() {
+    const zoneSelect = document.getElementById('id_zone');
+    const lieuVoteSelect = document.getElementById('id_lieu_vote');
+    const lieuxCountSpan = document.getElementById('lieuxCount');
+    const lieuVoteField = document.getElementById('lieuVoteField');
+
+    const selectedZone = zoneSelect.value;
+
+    // Effacer toutes les options actuelles
+    lieuVoteSelect.innerHTML = '';
+
+    if (selectedZone && zonesLieux[selectedZone]) {
+      // Ajouter une option par défaut
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Sélectionner un lieu de vote';
+      lieuVoteSelect.appendChild(defaultOption);
+
+      // Ajouter les lieux de vote de la zone sélectionnée
+      const lieux = zonesLieux[selectedZone];
+      lieux.forEach(lieu => {
+        const option = document.createElement('option');
+        option.value = lieu;
+        option.textContent = lieu;
+        lieuVoteSelect.appendChild(option);
+      });
+
+      // Mettre à jour le compteur
+      lieuxCountSpan.textContent = `(${lieux.length} lieux disponibles)`;
+
+      // Activer le champ
+      lieuVoteField.classList.remove('disabled');
+      lieuVoteSelect.disabled = false;
+
+    } else {
+      // Si aucune zone n'est sélectionnée
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Sélectionner d\'abord une zone';
+      lieuVoteSelect.appendChild(defaultOption);
+
+      lieuxCountSpan.textContent = '';
+      lieuVoteField.classList.add('disabled');
+      lieuVoteSelect.disabled = true;
+    }
+  }
+
+  // Initialiser au chargement de la page
+  document.addEventListener('DOMContentLoaded', function() {
+    updateLieuxVote();
+  });
 
   // Fonction pour sélectionner un fichier
   function selectFile() {

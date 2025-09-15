@@ -82,9 +82,9 @@ class EnqueteurAdmin(admin.ModelAdmin):
 
 @admin.register(FicheMilitant)
 class FicheMilitantAdmin(admin.ModelAdmin):
-    list_display = ('prenoms', 'nom', 'sexe', 'region', 'section', 'enqueteur',
+    list_display = ('prenoms', 'nom', 'sexe', 'section', 'enqueteur',
                     'statut_csv', 'photo_thumb', 'numero_electeur_csv', 'date_soumission')
-    list_filter = ('sexe', 'region', 'departement', 'inscription_electorale',
+    list_filter = ('sexe', 'departement', 'inscription_electorale',
                    'enqueteur', 'est_dans_csv', 'date_soumission')
     search_fields = ('prenoms', 'nom', 'contacts', 'section', 'comite_base',
                      'enqueteur__prenom', 'enqueteur__nom', 'numero_carte_electeur', 'numero_electeur_csv')
@@ -104,7 +104,7 @@ class FicheMilitantAdmin(admin.ModelAdmin):
         }),
         ('1. Localisation', {
             'fields': (
-                'region', 'departement_administratif', 'departement', 'zone',
+                 'departement', 'zone',
                 'section', 'qualite_section', 'comite_base', 'qualite_cb',
                 'lieu_vote'
             )
@@ -214,7 +214,7 @@ class EnquetePolitiqueAdmin(admin.ModelAdmin):
             'fields': ('prenom', 'nom', 'age', 'sexe', 'contact', 'email', 'profession', 'niveau_etudes')
         }),
         ('Localisation électorale', {
-            'fields': ('region', 'departement', 'commune', 'lieu_vote', 'carte_electeur')
+            'fields': ( 'departement', 'commune', 'lieu_vote', 'carte_electeur')
         }),
         ('Opinion politique', {
             'fields': ('parti', 'candidat', 'attentes')

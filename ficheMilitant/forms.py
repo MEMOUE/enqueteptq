@@ -2,9 +2,11 @@
 
 from django import forms
 from .models import FicheMilitant, EnquetePolitique
+from .zone_lieu_utils import get_zones_lieux_cached, get_tous_lieux_vote
 from django.core.exceptions import ValidationError
 import os
 from django.conf import settings
+import json
 
 class FicheMilitantForm(forms.ModelForm):
     class Meta:
@@ -14,6 +16,12 @@ class FicheMilitantForm(forms.ModelForm):
             'date_naissance': forms.DateInput(attrs={'type': 'date'}),
             'sexe': forms.Select(),
             'inscription_electorale': forms.RadioSelect(),
+
+            # Zone avec choix dynamiques
+            'zone': forms.Select(),
+
+            # Lieu de vote avec choix dynamiques
+            'lieu_vote': forms.Select(),
 
             # Checkboxes pour les documents
             'a_cni': forms.CheckboxInput(),
@@ -36,8 +44,7 @@ class FicheMilitantForm(forms.ModelForm):
 
         # Champs obligatoires selon le PDF (marqués avec *)
         required_fields = [
-            'region', 'departement_administratif', 'departement', 'zone',
-            'section', 'comite_base', 'lieu_vote',
+            'departement', 'zone', 'section', 'comite_base', 'lieu_vote',
             'prenoms', 'nom', 'date_naissance', 'contacts', 'sexe', 'profession'
         ]
 
@@ -45,6 +52,33 @@ class FicheMilitantForm(forms.ModelForm):
             if field_name in self.fields:
                 self.fields[field_name].required = True
                 self.fields[field_name].widget.attrs['required'] = True
+
+        # NOUVEAU : Configuration du champ zone (obligatoire)
+        zones_lieux = get_zones_lieux_cached()
+        zone_choices = [('', 'Sélectionner une zone')]
+        for zone in sorted(zones_lieux.keys()):
+            zone_choices.append((zone, zone))
+
+        self.fields['zone'].choices = zone_choices
+        self.fields['zone'].widget.attrs.update({
+            'id': 'id_zone',
+            'class': 'zone-select',
+            'onchange': 'updateLieuxVote()',
+            'required': True
+        })
+
+        # NOUVEAU : Configuration du champ lieu de vote (obligatoire)
+        # Par défaut, pas de choix - sera rempli par JavaScript
+        self.fields['lieu_vote'].choices = [('', 'Sélectionner d\'abord une zone')]
+        self.fields['lieu_vote'].widget.attrs.update({
+            'id': 'id_lieu_vote',
+            'class': 'lieu-vote-select',
+            'required': True
+        })
+
+        # Zone et lieu_vote sont maintenant obligatoires
+        self.fields['zone'].required = True
+        self.fields['lieu_vote'].required = True
 
         # Personnalisation des labels
         self.fields['prenoms'].widget.attrs['placeholder'] = 'Ex: Jean Baptiste'
@@ -89,6 +123,11 @@ class FicheMilitantForm(forms.ModelForm):
 
         return photo
 
+    def get_zones_lieux_json(self):
+        """Retourne les données zones-lieux au format JSON pour JavaScript"""
+        zones_lieux = get_zones_lieux_cached()
+        return json.dumps(zones_lieux)
+
 # Garder l'ancien formulaire pour compatibilité
 class EnquetePolitiqueForm(forms.ModelForm):
     class Meta:
@@ -105,7 +144,7 @@ class EnquetePolitiqueForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         required_fields = ['prenom', 'nom', 'age', 'sexe', 'contact', 'profession',
-                           'region', 'commune', 'lieu_vote', 'parti', 'candidat']
+                           'commune', 'lieu_vote', 'parti', 'candidat']
 
         for field_name in required_fields:
             if field_name in self.fields:

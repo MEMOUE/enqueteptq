@@ -45,19 +45,37 @@ class FicheMilitant(models.Model):
     )
 
     # 1. LOCALISATION
-    region = models.CharField(max_length=100, verbose_name="Région")
-    departement_administratif = models.CharField(max_length=100, verbose_name="Département Administratif")
     departement = models.CharField(
         max_length=100,
         default="Danané",
         verbose_name="Département"
     )
-    zone = models.CharField(max_length=100, verbose_name="Zone")
+
+    # MODIFIÉ : Zone obligatoire avec choix prédéfinis
+    ZONE_CHOICES = [
+        ('DALEU', 'Daleu'),
+        ('DANANE', 'Danané'),
+        ('DANANE SP', 'Danané SP'),
+        ('GBON-HOUYE', 'Gbon-Houyé'),
+        ('KOUAN-HOULE', 'Kouan-Houlé'),
+        ('SEILEU', 'Seileu'),
+    ]
+    zone = models.CharField(
+        max_length=100,
+        choices=ZONE_CHOICES,
+        verbose_name="Zone"
+    )
+
     section = models.CharField(max_length=100, verbose_name="Section")
     qualite_section = models.CharField(max_length=100, blank=True, null=True, verbose_name="Qualité dans la section")
     comite_base = models.CharField(max_length=100, verbose_name="Comité de base")
     qualite_cb = models.CharField(max_length=100, blank=True, null=True, verbose_name="Qualité dans le CB")
-    lieu_vote = models.CharField(max_length=150, verbose_name="Lieu de vote")
+
+    # MODIFIÉ : Lieu de vote obligatoire
+    lieu_vote = models.CharField(
+        max_length=150,
+        verbose_name="Lieu de vote"
+    )
 
     # 2. ETAT CIVIL
     prenoms = models.CharField(max_length=200, verbose_name="Prénom(s)")
