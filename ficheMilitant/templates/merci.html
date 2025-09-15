@@ -299,6 +299,20 @@
       text-align: left;
     }
 
+    /* Style pour photo non chargée */
+    .photo-error {
+      width: 140px;
+      height: 175px;
+      border: 4px dashed rgba(255,255,255,0.6);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.8);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .card {
@@ -325,7 +339,8 @@
       }
 
       .photo-militant,
-      .photo-placeholder-main {
+      .photo-placeholder-main,
+      .photo-error {
         width: 120px;
         height: 150px;
       }
@@ -352,9 +367,15 @@
     <div class="person-content">
       <div class="person-photo">
         {% if derniere_fiche.photo %}
-        <img src="{{ derniere_fiche.photo.url }}"
+        <img id="photoMilitant"
+             src="{{ derniere_fiche.photo.url }}"
              alt="Photo de {{ derniere_fiche.prenoms }} {{ derniere_fiche.nom }}"
-             class="photo-militant">
+             class="photo-militant"
+             onerror="this.style.display='none'; document.getElementById('photoErrorPlaceholder').style.display='flex';">
+        <div id="photoErrorPlaceholder" class="photo-error" style="display:none;">
+          <span>📷</span>
+          <small>Photo non accessible</small>
+        </div>
         {% else %}
         <div class="photo-placeholder-main">
           <span>📷</span>
@@ -482,8 +503,19 @@
   </div>
 </div>
 
-<!-- Script de débogage (à supprimer en production) -->
 <script>
+  // Gestion d'erreur pour les photos
+  document.addEventListener('DOMContentLoaded', function() {
+    const photoImg = document.getElementById('photoMilitant');
+    if (photoImg) {
+      // Vérifier si l'image est déjà chargée
+      if (photoImg.complete && photoImg.naturalHeight === 0) {
+        photoImg.style.display = 'none';
+        document.getElementById('photoErrorPlaceholder').style.display = 'flex';
+      }
+    }
+  });
+
   console.log('DEBUG: derniere_fiche =', {{ derniere_fiche|yesno:"true,false,null" }});
   {% if derniere_fiche %}
   console.log('DEBUG: Photo URL =', '{{ derniere_fiche.photo.url|default:"Pas de photo" }}');

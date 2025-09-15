@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fiche d'Identification Unique du Militant</title>
+  <title>Fiche d'Identification Unique </title>
   <style>
     body {margin:0; font-family: Arial, sans-serif; background:#f6f7fb; color:#111; font-size: 14px;}
 
@@ -428,9 +428,9 @@
     </div>
     <div class="photo-section">
       <div class="photo-container">
-        <img id="photoPreview" class="photo-preview" alt="Photo du militant">
+        <img id="photoPreview" class="photo-preview" alt="Photo ">
         <div id="photoPlaceholder" class="photo-placeholder">
-          PHOTO<br>MILITANT
+          PHOTO<br>ADHERENT
         </div>
       </div>
       <div class="photo-controls">
@@ -442,7 +442,7 @@
   </div>
 
   <div class="form-title">
-    FICHE D'IDENTIFICATION UNIQUE DU MILITANT
+    FICHE D'IDENTIFICATION UNIQUE
   </div>
 
   <div class="reference-boxes">
@@ -520,12 +520,12 @@
 
           <div class="field-row">
             <div class="field">
-              <label for="{{ form.comite_base.id_for_label }}">Comité de base <span class="required">*</span></label>
+              <label for="{{ form.comite_base.id_for_label }}">Consulat <span class="required">*</span></label>
               {{ form.comite_base }}
               {% if form.comite_base.errors %}<div class="alert alert-error">{{ form.comite_base.errors.0 }}</div>{% endif %}
             </div>
             <div class="field">
-              <label for="{{ form.qualite_cb.id_for_label }}">Qualité dans le CB</label>
+              <label for="{{ form.qualite_cb.id_for_label }}">Qualité dans le Consulat</label>
               {{ form.qualite_cb }}
               {% if form.qualite_cb.errors %}<div class="alert alert-error">{{ form.qualite_cb.errors.0 }}</div>{% endif %}
             </div>
