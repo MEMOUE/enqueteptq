@@ -366,7 +366,8 @@
 
     <div class="person-content">
       <div class="person-photo">
-        {% if derniere_fiche.photo %}
+        {% if derniere_fiche.photo.name %}
+        <!-- ✅ CORRECTION : Vérifier avec .name au lieu de juste la photo -->
         <img id="photoMilitant"
              src="{{ derniere_fiche.photo.url }}"
              alt="Photo de {{ derniere_fiche.prenoms }} {{ derniere_fiche.nom }}"
@@ -518,7 +519,11 @@
 
   console.log('DEBUG: derniere_fiche =', {{ derniere_fiche|yesno:"true,false,null" }});
   {% if derniere_fiche %}
-  console.log('DEBUG: Photo URL =', '{{ derniere_fiche.photo.url|default:"Pas de photo" }}');
+  {% if derniere_fiche.photo.name %}
+  console.log('DEBUG: Photo URL =', '{{ derniere_fiche.photo.url }}');
+  {% else %}
+  console.log('DEBUG: Pas de photo pour cette fiche');
+  {% endif %}
   console.log('DEBUG: Nom =', '{{ derniere_fiche.prenoms }} {{ derniere_fiche.nom }}');
   {% endif %}
 </script>

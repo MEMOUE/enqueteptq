@@ -169,7 +169,16 @@ def merci_view(request):
                 enqueteur=request.user.enqueteur
             )
             print(f"DEBUG: Fiche trouvée - {derniere_fiche.prenoms} {derniere_fiche.nom}")  # Debug
-            print(f"DEBUG: Photo URL - {derniere_fiche.photo.url if derniere_fiche.photo else 'Pas de photo'}")  # Debug
+
+            # ✅ CORRECTION : Vérifier correctement si une photo existe
+            if derniere_fiche.photo and hasattr(derniere_fiche.photo, 'url'):
+                try:
+                    photo_url = derniere_fiche.photo.url
+                    print(f"DEBUG: Photo URL - {photo_url}")
+                except ValueError:
+                    print("DEBUG: Photo sans fichier associé")
+            else:
+                print("DEBUG: Pas de photo")
 
             # Nettoyer la session après utilisation
             if 'derniere_fiche_id' in request.session:

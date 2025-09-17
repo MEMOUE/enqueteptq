@@ -124,10 +124,37 @@ class FicheMilitant(models.Model):
         return f"{self.prenoms} {self.nom} - {self.date_soumission.strftime('%d/%m/%Y')}"
 
     def get_photo_url(self):
-        """Retourne l'URL de la photo ou None"""
-        if self.photo:
-            return self.photo.url
+        """
+        ✅ NOUVEAU : Retourne l'URL de la photo de manière sécurisée ou None
+        """
+        if self.photo and self.photo.name:
+            try:
+                return self.photo.url
+            except ValueError:
+                return None
         return None
+
+    def has_photo(self):
+        """
+        ✅ NOUVEAU : Vérifie si la fiche a une photo de manière sécurisée
+        """
+        return bool(self.photo and self.photo.name)
+
+    def get_photo_display(self):
+        """
+        ✅ NOUVEAU : Retourne un dictionnaire avec les infos d'affichage de la photo
+        """
+        if self.has_photo():
+            return {
+                'has_photo': True,
+                'url': self.get_photo_url(),
+                'filename': self.photo.name
+            }
+        return {
+            'has_photo': False,
+            'url': None,
+            'filename': None
+        }
 
     class Meta:
         verbose_name = "Fiche de Militant"

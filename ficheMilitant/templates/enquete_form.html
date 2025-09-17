@@ -532,7 +532,7 @@
               {% if form.section.errors %}<div class="alert alert-error">{{ form.section.errors.0 }}</div>{% endif %}
             </div>
             <div class="field">
-              <label for="{{ form.qualite_section.id_for_label }}">Qualité dans la section</label>
+              <label for="{{ form.qualite_section.id_for_label }}">Qualité dans la Section</label>
               {{ form.qualite_section }}
               {% if form.qualite_section.errors %}<div class="alert alert-error">{{ form.qualite_section.errors.0 }}</div>{% endif %}
             </div>
@@ -554,7 +554,7 @@
           <div class="field-row full">
             <div class="field conditional-field" id="lieuVoteField">
               <label for="{{ form.lieu_vote.id_for_label }}">
-                Lieu de vote <span class="required">*</span>
+                Lieu de Vote <span class="required">*</span>
                 <span id="lieuxCount" style="font-size: 11px; color: #666;"></span>
               </label>
               {{ form.lieu_vote }}
@@ -583,12 +583,12 @@
 
           <div class="field-row">
             <div class="field">
-              <label for="{{ form.date_naissance.id_for_label }}">Date de naissance <span class="required">*</span></label>
+              <label for="{{ form.date_naissance.id_for_label }}">Date de Naissance <span class="required">*</span></label>
               {{ form.date_naissance }}
               {% if form.date_naissance.errors %}<div class="alert alert-error">{{ form.date_naissance.errors.0 }}</div>{% endif %}
             </div>
             <div class="field">
-              <label for="{{ form.lieu_naissance.id_for_label }}">Lieu de naissance</label>
+              <label for="{{ form.lieu_naissance.id_for_label }}">Lieu de Naissance</label>
               {{ form.lieu_naissance }}
               {% if form.lieu_naissance.errors %}<div class="alert alert-error">{{ form.lieu_naissance.errors.0 }}</div>{% endif %}
             </div>
