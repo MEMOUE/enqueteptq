@@ -106,9 +106,6 @@ def enquete_view(request):
                 # Stocker le numéro électeur s'il existe
                 if resultat.get('numero_electeur'):
                     fiche.numero_electeur_csv = resultat['numero_electeur']
-                    # Si le champ numéro carte électeur est vide, le remplir
-                    if not fiche.numero_carte_electeur:
-                        fiche.numero_carte_electeur = resultat['numero_electeur']
 
                 messages.warning(
                     request,

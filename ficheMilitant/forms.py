@@ -86,8 +86,6 @@ class FicheMilitantForm(forms.ModelForm):
         self.fields['contacts'].widget.attrs['placeholder'] = 'Ex: +225 07 XX XX XX XX'
         self.fields['email'].widget.attrs['placeholder'] = 'Ex: nom@email.com'
         self.fields['numero_piece'].widget.attrs['placeholder'] = 'Numéro du document d\'identité'
-        self.fields['numero_carte_electeur'].widget.attrs['placeholder'] = 'Numéro de la carte d\'électeur'
-        self.fields['nni'].widget.attrs['placeholder'] = 'Numéro d\'Identification Unique'
 
         # Configuration du champ photo
         self.fields['photo'].widget.attrs.update({

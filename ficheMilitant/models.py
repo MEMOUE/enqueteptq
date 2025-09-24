@@ -112,8 +112,6 @@ class FicheMilitant(models.Model):
     aucune_piece = models.BooleanField(default=False, verbose_name="Aucune Pièce")
 
     numero_piece = models.CharField(max_length=50, blank=True, null=True, verbose_name="Numéro de la pièce")
-    numero_carte_electeur = models.CharField(max_length=50, blank=True, null=True, verbose_name="Numéro carte électeur")
-    nni = models.CharField(max_length=50, blank=True, null=True, verbose_name="Numéro d'Identification Unique (NNI)")
 
     # Métadonnées
     date_soumission = models.DateTimeField(auto_now_add=True)

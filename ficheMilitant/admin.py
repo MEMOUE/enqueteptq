@@ -87,7 +87,7 @@ class FicheMilitantAdmin(admin.ModelAdmin):
     list_filter = ('sexe', 'departement', 'inscription_electorale',
                    'enqueteur', 'est_dans_csv', 'date_soumission')
     search_fields = ('prenoms', 'nom', 'contacts', 'section', 'comite_base',
-                     'enqueteur__prenom', 'enqueteur__nom', 'numero_carte_electeur', 'numero_electeur_csv')
+                     'enqueteur__prenom', 'enqueteur__nom', 'numero_electeur_csv')
     readonly_fields = ('date_soumission', 'est_dans_csv', 'numero_electeur_csv', 'photo_preview')
 
     fieldsets = (
@@ -104,7 +104,7 @@ class FicheMilitantAdmin(admin.ModelAdmin):
         }),
         ('1. Localisation', {
             'fields': (
-                 'departement', 'zone',
+                'departement', 'zone',
                 'section', 'qualite_section', 'comite_base', 'qualite_cb',
                 'lieu_vote'
             )
@@ -120,7 +120,7 @@ class FicheMilitantAdmin(admin.ModelAdmin):
                 'inscription_electorale',
                 ('a_cni', 'a_attestation', 'a_certificat'),
                 ('a_extrait', 'a_recepisse', 'aucune_piece'),
-                'numero_piece', 'numero_carte_electeur', 'nni'
+                'numero_piece'
             )
         }),
         ('Métadonnées', {

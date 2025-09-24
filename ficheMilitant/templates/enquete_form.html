@@ -214,21 +214,6 @@
       text-transform: uppercase;
     }
 
-    .reference-boxes {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .ref-box {
-      border: 2px solid #333;
-      padding: 8px;
-      font-size: 12px;
-      min-width: 60px;
-      text-align: center;
-    }
-
     .form-content {
       padding: 20px;
     }
@@ -477,13 +462,6 @@
     FICHE D'IDENTIFICATION UNIQUE
   </div>
 
-  <div class="reference-boxes">
-    <div class="ref-box">REG.</div>
-    <div class="ref-box">DA.</div>
-    <div class="ref-box">D ... ... Z ... ...</div>
-    <div class="ref-box">ZONE</div>
-  </div>
-
   <div class="form-content">
     {% if total_fiches %}
     <div class="stats">
@@ -669,21 +647,11 @@
             </div>
           </div>
 
-          <div class="field-row triple">
+          <div class="field-row full">
             <div class="field">
               <label for="{{ form.numero_piece.id_for_label }}">Numéro de la pièce</label>
               {{ form.numero_piece }}
               {% if form.numero_piece.errors %}<div class="alert alert-error">{{ form.numero_piece.errors.0 }}</div>{% endif %}
-            </div>
-            <div class="field">
-              <label for="{{ form.numero_carte_electeur.id_for_label }}">Numéro carte électeur</label>
-              {{ form.numero_carte_electeur }}
-              {% if form.numero_carte_electeur.errors %}<div class="alert alert-error">{{ form.numero_carte_electeur.errors.0 }}</div>{% endif %}
-            </div>
-            <div class="field">
-              <label for="{{ form.nni.id_for_label }}">Numéro d'Identification Unique (NNI)</label>
-              {{ form.nni }}
-              {% if form.nni.errors %}<div class="alert alert-error">{{ form.nni.errors.0 }}</div>{% endif %}
             </div>
           </div>
         </div>
