@@ -1,3 +1,4 @@
+
 # enquete/settings.py
 
 from pathlib import Path
@@ -61,7 +62,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'enquete.wsgi.application'
 
-# Database
+
 pymysql.install_as_MySQLdb()
 
 DATABASES = {
@@ -69,7 +70,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'enquete_db',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '123456789',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -160,3 +161,5 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 # Types de fichiers autorisés pour les photos
 ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
 MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB en bytes
+
+#

@@ -112,7 +112,7 @@ class FicheMilitantAdmin(admin.ModelAdmin):
         ('2. État Civil', {
             'fields': (
                 'prenoms', 'nom', 'date_naissance', 'lieu_naissance',
-                'contacts', 'email', 'sexe', 'profession', 'fonction'
+                'contacts', 'email', 'sexe', 'profession'
             )
         }),
         ('3. Document d\'Identité', {
